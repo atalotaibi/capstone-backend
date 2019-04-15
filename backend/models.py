@@ -18,7 +18,7 @@ class Question(models.Model):
         ('T', 'true'),
         ('F', 'false'),
     )
-    answer_status = models.CharField(
+    question_status = models.CharField(
         max_length=2,
         choices=ANSWEREd,
         default='F',
@@ -37,6 +37,6 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    q_text = models.TextField()
+    a_text = models.TextField()
     question = models.ForeignKey(
         Question, related_name='answers', default=1, on_delete=models.CASCADE)
