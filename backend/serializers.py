@@ -1,9 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
-
-
-## MODELS ##
 from .models import (
   User,
   Major,
@@ -11,6 +8,7 @@ from .models import (
   Answer,
   
 )
+
 
 # validate first_name, last_name in ProfileUpdateView
 class UserSerializer(serializers.ModelSerializer):
@@ -49,4 +47,46 @@ class UserCreateSerializer(serializers.ModelSerializer):
         token = jwt_encode_handler(payload)
         validated_data['token'] = token
         return validated_data
+
+class MajorSerializer(serializers.ModelSerializer): 
+	
+	class Meta:
+		model = Major
+		fields = ['name']
+
+
+class QuestionCreateSerializer(serializers.ModelSerializer):
+
+
+	class Meta:
+		model = Question
+		fields = ['q_text', 'major',]
+
+
+
+
+class AnswerListSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Answer
+		fields = ['a_text']
+
+
+class QuestionListSerializer(serializers.ModelSerializer):
+	answers = AnswerListSerializer(many=True)
+	major = MajorSerializer()
+	class Meta:
+		model = Question
+		fields = ['q_text', 'created_on','answers', 'major',]
+		
+
+
+class AnswerCreateSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Answer
+		fields = ['a_text',]
+
+
+
+
 
