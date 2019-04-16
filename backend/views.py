@@ -6,9 +6,18 @@ from rest_framework.generics import (
 	RetrieveUpdateAPIView,
 	DestroyAPIView,
 )
-from .serializers import (QuestionCreateSerializer, QuestionListSerializer,AnswerCreateSerializer, MajorSerializer )
-from rest_framework.permissions import (IsAuthenticated, IsAdminUser, )
-from .models import (Question, Answer, Major,  )
+from django.contrib.auth.models import User
+from .serializers import (UserCreateSerializer, QuestionCreateSerializer, QuestionListSerializer,AnswerCreateSerializer, MajorSerializer )
+from rest_framework.filters import (SearchFilter, OrderingFilter)
+from rest_framework.permissions import (
+	AllowAny,
+	IsAuthenticated,
+	IsAdminUser
+)
+from .models import (User, Question, Answer, Major,  )
+
+class UserCreateAPIView(CreateAPIView):
+    serializer_class = UserCreateSerializer
 
 class QuestionCreateView(CreateAPIView):
 	serializer_class = QuestionCreateSerializer

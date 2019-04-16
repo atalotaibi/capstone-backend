@@ -26,4 +26,4 @@ class Question(models.Model):
 class Answer(models.Model):
     a_text = models.TextField()
     question = models.ForeignKey(
-        Question, related_name='answers', default=1, on_delete=models.CASCADE)
+    Question, related_name='answers', default=1, on_delete=models.CASCADE)
