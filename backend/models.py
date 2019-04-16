@@ -14,24 +14,11 @@ class Major(models.Model):
 
 class Question(models.Model):
     q_text = models.TextField()
-    ANSWEREd = (
-        ('T', 'true'),
-        ('F', 'false'),
-    )
-    question_status = models.CharField(
-        max_length=2,
-        choices=ANSWEREd,
-        default='F',
-    )
-    APPROVED = (
-        ('T', 'true'),
-        ('F', 'false'),
-    )
-    answer_status = models.CharField(
-        max_length=2,
-        choices=APPROVED,
-        default='F',
-    )
+
+    answered = models.BooleanField(default=False)
+
+    approved = models.BooleanField(default=False)
+
     major = models.ForeignKey(
         Major, related_name='questions', default=1, on_delete=models.CASCADE)
 
