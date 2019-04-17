@@ -7,7 +7,8 @@ from rest_framework.generics import (
     DestroyAPIView,
 )
 from .serializers import (
-    UserCreateSerializer,  
+    UserCreateSerializer,
+    ExpertUserCreateSerializer  
 )
 from .models import User
 from .models import Major
@@ -23,3 +24,6 @@ from rest_framework.permissions import (
 # Create your views here.
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
+
+class ExpertUserCreateAPIView(CreateAPIView):
+    serializer_class = ExpertUserCreateSerializer
