@@ -1,43 +1,64 @@
 from django.shortcuts import render
 from rest_framework.generics import (
-	CreateAPIView, 
-	ListAPIView, 
-	RetrieveAPIView,
-	RetrieveUpdateAPIView,
-	DestroyAPIView,
+    CreateAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    RetrieveUpdateAPIView,
+    DestroyAPIView,
 )
 from django.contrib.auth.models import User
-from .serializers import (UserCreateSerializer, QuestionCreateSerializer, QuestionListSerializer,AnswerCreateSerializer, MajorSerializer )
+from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer)
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import (
-	AllowAny,
-	IsAuthenticated,
-	IsAdminUser
+    AllowAny,
+    IsAuthenticated,
+    IsAdminUser
 )
-from .models import (User, Question, Answer, Major,  )
+from .models import (User, Question, Answer, Major,)
+from rest_framework import status
+from rest_framework.response import Response
+
 
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
 
-class QuestionCreateView(CreateAPIView):
-	serializer_class = QuestionCreateSerializer
-	# permission_classes = [IsAuthenticated, ]
 
-	def perform_create(self, serializer):
-		serializer.save()
+class QuestionCreateView(CreateAPIView):
+    serializer_class = QuestionCreateSerializer
+    # permission_classes = [IsAuthenticated, ]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
 
 class QuestionListView(ListAPIView):
-	queryset = Question.objects.all()
-	serializer_class = QuestionListSerializer
+    queryset = Question.objects.all()
+    serializer_class = QuestionListSerializer
 
 
 class AnswerCreateView(CreateAPIView):
-	serializer_class = AnswerCreateSerializer
-	# permission_classes = [IsAuthenticated, ]
+    serializer_class = AnswerCreateSerializer
 
-	def perform_create(self, serializer):
-		serializer.save()
+    def post(self, request, question_id):
+        my_data = request.data
+        print(my_data)
+        serializer = self.serializer_class(data=my_data)
+        if serializer.is_valid():
+            valid_data = serializer.data
+            new_data = {
+                'a_text': valid_data['a_text'],
+                'question': Question.objects.get(id=question_id)
+            }
+            Answer.objects.create(**new_data)
+            return Response(valid_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# class AnswerListView(ListAPIView):
-# 	queryset = Answer.objects.all()
-# 	serializer_class = QuestionListSerializer
+
+class AnswerListView(ListAPIView):
+
+    def get(self, request, question_id):
+        answers = Answer.objects.filter(
+            question=Question.objects.get(id=question_id))
+        message_list = AnswerListSerializer(answers, many=True).data
+        return Response(message_list, status=status.HTTP_200_OK)
