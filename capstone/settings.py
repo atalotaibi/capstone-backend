@@ -56,14 +56,16 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 CORS_ORIGIN_WHITELIST = (
     'google.com',
     'hostname.example.com',
-    'localhost:8000',
+    'http://localhost:3000',
     '127.0.0.1:9000'
+    '127.0.0.1:8000'
 )
+
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 ROOT_URLCONF = 'capstone.urls'
