@@ -34,13 +34,13 @@ class UserCreateSerializer(serializers.ModelSerializer):
         last_name = validated_data['last_name']
         email = validated_data['email']
         password = validated_data['password']
-        
         new_user = User(
             username=username,
             first_name=first_name,
             last_name=last_name,
             email=email,
-            is_expert=False)
+   
+                is_expert=False)
         new_user.set_password(password)
         new_user.save()
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -49,9 +49,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         token = jwt_encode_handler(payload)
         validated_data['token'] = token
         return validated_data
-
-
-
+  
 class ExpertUserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     token = serializers.CharField(allow_blank=True, read_only=True)
@@ -66,7 +64,6 @@ class ExpertUserCreateSerializer(serializers.ModelSerializer):
         last_name = validated_data['last_name']
         email = validated_data['email']
         password = validated_data['password']
-        
         new_user = User(
             username=username,
             first_name=first_name,
@@ -81,6 +78,3 @@ class ExpertUserCreateSerializer(serializers.ModelSerializer):
         token = jwt_encode_handler(payload)
         validated_data['token'] = token
         return validated_data
-
-
-
