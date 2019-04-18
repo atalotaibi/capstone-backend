@@ -70,12 +70,15 @@ class AnswerListSerializer(serializers.ModelSerializer):
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
-    answers = AnswerListSerializer(many=True)
+    answered = serializers.SerializerMethodField()
     major = MajorSerializer()
 
     class Meta:
         model = Question
         fields = ['id', 'q_text', 'created_on', 'answers', 'major', ]
+
+    def get_answered(self, obj):
+        return obj.answered()
 
 
 class AnswerCreateSerializer(serializers.ModelSerializer):

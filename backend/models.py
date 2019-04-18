@@ -14,10 +14,12 @@ class Major(models.Model):
 class Question(models.Model):
     q_text = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
-    answered = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
     major = models.ForeignKey(
         Major, related_name='questions', default=1, on_delete=models.CASCADE)
+
+    def answered(self):
+        return self.answers.exists()
 
 
 class Answer(models.Model):

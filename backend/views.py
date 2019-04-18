@@ -62,3 +62,8 @@ class AnswerListView(ListAPIView):
             question=Question.objects.get(id=question_id))
         message_list = AnswerListSerializer(answers, many=True).data
         return Response(message_list, status=status.HTTP_200_OK)
+
+
+class MajorListView(ListAPIView):
+    queryset = Major.objects.all()
+    serializer_class = MajorSerializer
