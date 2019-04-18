@@ -9,6 +9,7 @@ from rest_framework.generics import (
 from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
                           QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer)
+
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import (
     AllowAny,
@@ -20,6 +21,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 
+
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
 
@@ -27,6 +29,7 @@ class UserCreateAPIView(CreateAPIView):
 class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionCreateSerializer
     # permission_classes = [IsAuthenticated, ]
+
 
     def perform_create(self, serializer):
         serializer.save()
@@ -39,6 +42,7 @@ class QuestionListView(ListAPIView):
 
 class AnswerCreateView(CreateAPIView):
     serializer_class = AnswerCreateSerializer
+
 
     def post(self, request, question_id):
         my_data = request.data
@@ -62,6 +66,7 @@ class AnswerListView(ListAPIView):
             question=Question.objects.get(id=question_id))
         message_list = AnswerListSerializer(answers, many=True).data
         return Response(message_list, status=status.HTTP_200_OK)
+
 
 
 class MajorListView(ListAPIView):
