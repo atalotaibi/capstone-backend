@@ -9,7 +9,7 @@ from .models import (
   Answer,
 
 )
-
+# bitch you gonna work
 
 # validate first_name, last_name in ProfileUpdateView
 class UserSerializer(serializers.ModelSerializer):
