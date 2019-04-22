@@ -10,11 +10,15 @@ from rest_framework.generics import (
 from .serializers import (
     UserCreateSerializer,
     ExpertUserCreateSerializer,
+    UserDetailSerializer,
+    UserCreateUpdateSerializer
 )
+
 from .models import User, Major, Question, Answer
+from django.contrib.auth import get_user_model
 
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
                           QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer)
 
@@ -38,6 +42,19 @@ class UserCreateAPIView(CreateAPIView):
 class ExpertUserCreateAPIView(CreateAPIView):
     serializer_class = ExpertUserCreateSerializer
 
+
+class UserDetailView(RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserDetailSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'user_id'
+
+class UserUpdateView(RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserCreateUpdateSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'user_id'
+
 class Majors(ListAPIView):
     
     url="https://www.jvis.com/uguide/majordesc.htm"
@@ -47,12 +64,10 @@ class Majors(ListAPIView):
 
     for i in info:
         print(i.text)
-    # for i in info('mysqladmin create test -uroot -pmysqladmin12'.split()):
-    #     print (i.text),
+    
 
 
 
-# bgmhgf
 class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionCreateSerializer
     # permission_classes = [IsAuthenticated, ]
@@ -93,6 +108,7 @@ class AnswerListView(ListAPIView):
             question=Question.objects.get(id=question_id))
         message_list = AnswerListSerializer(answers, many=True).data
         return Response(message_list, status=status.HTTP_200_OK)
+
 
 
 

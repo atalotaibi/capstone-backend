@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from .models import (
@@ -8,7 +9,7 @@ from .models import (
   Answer,
 )
 
-
+User = get_user_model()
 def assign_token(user):
     jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -52,8 +53,20 @@ class ExpertUserCreateSerializer(BaseCreateSerializer):
         return validated_data
 
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    user= UserSerializer()
+# im gonna finish the profile today hell yeah
+    # image = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ['id','is_expert','username',
+                  'first_name', 'last_name', 'email', ]
 
-
+class UserCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','username',
+                  'first_name', 'last_name', 'email', ]
 class MajorSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -85,6 +98,8 @@ class QuestionListSerializer(serializers.ModelSerializer):
 
     def get_answered(self, obj):
         return obj.answered()
+
+
 
 
 class AnswerCreateSerializer(serializers.ModelSerializer):
