@@ -7,10 +7,8 @@ from rest_framework.generics import (
     DestroyAPIView,
 )
 
-from .models import User
-from .models import Major
-from .models import Question
-from .models import Answer
+from .models import User, Major, Question, Answer
+
 
 
 from django.contrib.auth.models import User
@@ -23,9 +21,11 @@ from rest_framework.permissions import (
     IsAuthenticated,
     IsAdminUser
 )
-from .models import (User, Question, Answer, Major,)
 from rest_framework import status
 from rest_framework.response import Response
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+import re
 
 
 
@@ -35,7 +35,21 @@ class UserCreateAPIView(CreateAPIView):
 class ExpertUserCreateAPIView(CreateAPIView):
     serializer_class = ExpertUserCreateSerializer
 
+class Majors(ListAPIView):
+    
+    url="https://www.jvis.com/uguide/majordesc.htm"
+    html= urlopen(url)
+    soup= BeautifulSoup(html.read(), features='html.parser')
+    info= soup.findAll('a', attrs={'href': re.compile("#")})
 
+    for i in info:
+        print(i.text)
+    # for i in info('mysqladmin create test -uroot -pmysqladmin12'.split()):
+    #     print (i.text),
+
+
+
+# bgmhgf
 class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionCreateSerializer
     # permission_classes = [IsAuthenticated, ]
