@@ -87,7 +87,7 @@ class QuestionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ['id', 'q_text', 'created_on',
-                  'answers', 'major', 'answered', ]
+                  'answers', 'major', 'answered', 'approved']
 
     def get_answered(self, obj):
         return obj.answered()
