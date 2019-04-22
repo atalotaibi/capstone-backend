@@ -5,10 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     is_expert = models.BooleanField(default=True)
-    
-    
-   
-    
+
     # Major = models.CharField(
     #     max_length=2,
     #     choices=MAJORS_CHOICES,
@@ -28,10 +25,10 @@ class Question(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
     asked_by = models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-        related_name= "asked_by"
-        )
+        User,
+        on_delete=models.CASCADE,
+        related_name="asked_by"
+    )
     major = models.ForeignKey(
         Major, related_name='questions', default=1, on_delete=models.CASCADE)
 

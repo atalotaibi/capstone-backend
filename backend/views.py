@@ -10,10 +10,9 @@ from rest_framework.generics import (
 from .models import User, Major, Question, Answer
 
 
-
 from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
-                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer,QuestionCreateUpdateSerializer )
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer)
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import (
@@ -28,19 +27,20 @@ from bs4 import BeautifulSoup
 import re
 
 
-
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
+
 
 class ExpertUserCreateAPIView(CreateAPIView):
     serializer_class = ExpertUserCreateSerializer
 
+
 class Majors(ListAPIView):
-    
-    url="https://www.jvis.com/uguide/majordesc.htm"
-    html= urlopen(url)
-    soup= BeautifulSoup(html.read(), features='html.parser')
-    info= soup.findAll('a', attrs={'href': re.compile("#")})
+
+    url = "https://www.jvis.com/uguide/majordesc.htm"
+    html = urlopen(url)
+    soup = BeautifulSoup(html.read(), features='html.parser')
+    info = soup.findAll('a', attrs={'href': re.compile("#")})
 
     for i in info:
         print(i.text)
@@ -48,15 +48,14 @@ class Majors(ListAPIView):
     #     print (i.text),
 
 
-
 # bgmhgf
 class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionCreateSerializer
     # permission_classes = [IsAuthenticated, ]
 
-
     def perform_create(self, serializer):
         serializer.save()
+
 
 class QuestionDelete(DestroyAPIView):
     queryset = Question.objects.all()
@@ -73,7 +72,6 @@ class QuestionListView(ListAPIView):
 
 class AnswerCreateView(CreateAPIView):
     serializer_class = AnswerCreateSerializer
-
 
     def post(self, request, question_id):
         my_data = request.data
@@ -97,7 +95,6 @@ class AnswerListView(ListAPIView):
             question=Question.objects.get(id=question_id))
         message_list = AnswerListSerializer(answers, many=True).data
         return Response(message_list, status=status.HTTP_200_OK)
-
 
 
 class MajorListView(ListAPIView):
