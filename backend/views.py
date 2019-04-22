@@ -7,10 +7,6 @@ from rest_framework.generics import (
     DestroyAPIView,
 )
 
-from .serializers import (
-    UserCreateSerializer,
-    ExpertUserCreateSerializer  
-)
 from .models import User
 from .models import Major
 from .models import Question
@@ -19,7 +15,7 @@ from .models import Answer
 
 from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
-                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer)
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer,QuestionCreateUpdateSerializer )
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import (
@@ -47,6 +43,13 @@ class QuestionCreateView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save()
+
+class QuestionDelete(DestroyAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionCreateUpdateSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'question_id'
+    # permission_class = [IsAdminUser,]
 
 
 class QuestionListView(ListAPIView):
