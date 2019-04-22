@@ -75,11 +75,11 @@ class MajorSerializer(serializers.ModelSerializer):
 
 
 class QuestionCreateSerializer(serializers.ModelSerializer):
-    User = UserSerializer()
+
 
     class Meta:
         model = Question
-        fields = ['q_text', 'major','asked_by']
+        fields = ['q_text', 'major',]
 
 
 class AnswerListSerializer(serializers.ModelSerializer):

@@ -76,7 +76,7 @@ class QuestionCreateView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save()
 
-
+#  dont forgat to assign the user asked=self.request.user
 class QuestionListView(ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionListSerializer

@@ -10,6 +10,11 @@ class User(AbstractUser):
     is_expert = models.BooleanField(default=True)
     image = models.ImageField(null=True, blank=True)
     
+
+
+
+
+
     # def __str__(self):
     #     return self.is_expert.username
    
@@ -32,11 +37,11 @@ class Question(models.Model):
     q_text = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
-    asked_by = models.ForeignKey(
-		User,
-		on_delete=models.CASCADE,
-        related_name= "asked_by"
-        )
+    # asked_by = models.ForeignKey(
+	# 	User,
+	# 	on_delete=models.CASCADE,
+    #     related_name= "asked_by"
+    #     )
     major = models.ForeignKey(
         Major, related_name='questions', default=1, on_delete=models.CASCADE)
 
