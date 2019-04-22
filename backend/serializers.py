@@ -9,9 +9,8 @@ from .models import (
   Answer,
 
 )
-# bitch you gonna work
 
-# validate first_name, last_name in ProfileUpdateView
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -99,6 +98,11 @@ class QuestionCreateSerializer(serializers.ModelSerializer):
         model = Question
         fields = ['q_text', 'major', ]
 
+class QuestionCreateUpdateSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Question
+        fields = ['q_text', 'major', ]
+
 
 class AnswerListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -109,10 +113,11 @@ class AnswerListSerializer(serializers.ModelSerializer):
 class QuestionListSerializer(serializers.ModelSerializer):
     answered = serializers.SerializerMethodField()
     major = MajorSerializer()
-
+    
+    
     class Meta:
         model = Question
-        fields = ['id', 'q_text', 'created_on', 'answers', 'major', ]
+        fields = ['id', 'q_text', 'created_on', 'answers', 'major','answered', ]
 
     def get_answered(self, obj):
         return obj.answered()
