@@ -9,6 +9,10 @@ from .models import (
 )
 
 
+
+class UserSerializer(serializers.ModelSerializer):
+
+
 def assign_token(user):
     jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -68,6 +72,11 @@ class QuestionCreateSerializer(serializers.ModelSerializer):
         model = Question
         fields = ['q_text', 'major','asked_by']
 
+class QuestionCreateUpdateSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Question
+        fields = ['q_text', 'major', ]
+
 
 class AnswerListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,10 +87,11 @@ class AnswerListSerializer(serializers.ModelSerializer):
 class QuestionListSerializer(serializers.ModelSerializer):
     answered = serializers.SerializerMethodField()
     major = MajorSerializer()
-
+    
+    
     class Meta:
         model = Question
-        fields = ['id', 'q_text', 'created_on', 'answers', 'major', ]
+        fields = ['id', 'q_text', 'created_on', 'answers', 'major','answered', ]
 
     def get_answered(self, obj):
         return obj.answered()
