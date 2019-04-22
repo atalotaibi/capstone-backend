@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 
 class User(AbstractUser):
     is_expert = models.BooleanField(default=True)
+
     image = models.ImageField(null=True, blank=True)
     
 
@@ -19,6 +20,7 @@ class User(AbstractUser):
     #     return self.is_expert.username
    
     
+
     # Major = models.CharField(
     #     max_length=2,
     #     choices=MAJORS_CHOICES,
@@ -37,11 +39,13 @@ class Question(models.Model):
     q_text = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
+
     # asked_by = models.ForeignKey(
 	# 	User,
 	# 	on_delete=models.CASCADE,
     #     related_name= "asked_by"
     #     )
+
     major = models.ForeignKey(
         Major, related_name='questions', default=1, on_delete=models.CASCADE)
 
