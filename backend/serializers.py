@@ -54,7 +54,7 @@ class ExpertUserCreateSerializer(BaseCreateSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    user= UserSerializer()
+    # user = UserSerializer()
 # im gonna finish the profile today hell yeah
     # image = serializers.SerializerMethodField()
     class Meta:
@@ -66,7 +66,7 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','username',
-                  'first_name', 'last_name', 'email', ]
+                  'first_name', 'last_name', 'email','user' ]
 class MajorSerializer(serializers.ModelSerializer):
 
     class Meta:
