@@ -27,3 +27,5 @@ urlpatterns = [
     path('major/list/', MajorListView.as_view(), name='major-list'),
 
 ]
+
+
