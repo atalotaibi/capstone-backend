@@ -97,3 +97,10 @@ class AnswerCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ['a_text', ]
+
+
+class QuestionDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['id', 'q_text', 'created_on',
+                  'answers', 'major', 'answered', 'approved']
