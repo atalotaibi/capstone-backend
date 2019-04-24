@@ -10,6 +10,8 @@ from .models import (
 )
 
 User = get_user_model()
+
+
 def assign_token(user):
     jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -54,21 +56,23 @@ class ExpertUserCreateSerializer(BaseCreateSerializer):
         return validated_data
 
 
-
 class UserDetailSerializer(serializers.ModelSerializer):
-    user= UserSerializer()
+    user = UserSerializer()
 # im gonna finish the profile today hell yeah
     # image = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ['id','is_expert','username',
+        fields = ['id', 'is_expert', 'username',
                   'first_name', 'last_name', 'email', ]
+
 
 class UserCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','username',
+        fields = ['id', 'username',
                   'first_name', 'last_name', 'email', ]
+
 
 class MajorSerializer(serializers.ModelSerializer):
 
@@ -79,13 +83,10 @@ class MajorSerializer(serializers.ModelSerializer):
 
 class QuestionCreateSerializer(serializers.ModelSerializer):
 
-
     class Meta:
         model = Question
 
-        fields = ['q_text', 'major',]
-
-        
+        fields = ['q_text', 'major', ]
 
 
 class QuestionCreateUpdateSerializer(serializers.ModelSerializer):
@@ -94,11 +95,10 @@ class QuestionCreateUpdateSerializer(serializers.ModelSerializer):
         fields = ['q_text', 'major', ]
 
 
-
 class AnswerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ['a_text']
+        fields = ['a_text', 'approved']
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
@@ -114,12 +114,16 @@ class QuestionListSerializer(serializers.ModelSerializer):
         return obj.answered()
 
 
-
-
 class AnswerCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ['a_text', ]
+
+
+class AnswerApproveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = ['approved', ]
 
 
 class QuestionDetailSerializer(serializers.ModelSerializer):

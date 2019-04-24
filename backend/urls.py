@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (UserCreateAPIView, QuestionCreateView,
-                    QuestionListView, AnswerCreateView, AnswerListView, MajorListView, QuestionDelete, QuestionDetailView)
+                    QuestionListView, AnswerCreateView, AnswerListView, MajorListView, QuestionDelete, QuestionDetailView, AnswerApproveView)
 from rest_framework_jwt.views import obtain_jwt_token
 
 from .views import (
@@ -29,7 +29,10 @@ urlpatterns = [
     path('question/<int:question_id>',
          QuestionDetailView.as_view(), name='question-detail'),
     path('<int:question_id>/', AnswerListView.as_view(), name='answer-list'),
-    path('<int:question_id>/send', AnswerCreateView.as_view(), name='answer-create'),
+    path('<int:question_id>/send',
+         AnswerApproveView.as_view(), name='answer-create'),
+    path('<int:answer_id>/status',
+         AnswerApproveView.as_view(), name='answer-approve'),
     path('major/list/', MajorListView.as_view(), name='major-list'),
 
 

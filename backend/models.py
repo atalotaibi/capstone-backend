@@ -4,22 +4,13 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 
 
-
-
 class User(AbstractUser):
     is_expert = models.BooleanField(default=True)
 
     image = models.ImageField(null=True, blank=True)
-    
-
-
-
-
 
     # def __str__(self):
     #     return self.is_expert.username
-   
-    
 
     # Major = models.CharField(
     #     max_length=2,
@@ -41,8 +32,8 @@ class Question(models.Model):
     approved = models.BooleanField(default=False)
 
     # asked_by = models.ForeignKey(
-	# 	User,
-	# 	on_delete=models.CASCADE,
+    # 	User,
+    # 	on_delete=models.CASCADE,
     #     related_name= "asked_by"
     #     )
 
@@ -57,3 +48,4 @@ class Answer(models.Model):
     a_text = models.TextField()
     question = models.ForeignKey(
         Question, related_name='answers', default=1, on_delete=models.CASCADE)
+    approved = models.BooleanField(default=False)

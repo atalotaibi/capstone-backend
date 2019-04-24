@@ -22,7 +22,7 @@ from django.contrib.auth import get_user_model
 
 # from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
-                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer)
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer, AnswerApproveSerializer)
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import (
@@ -45,12 +45,12 @@ class ExpertUserCreateAPIView(CreateAPIView):
     serializer_class = ExpertUserCreateSerializer
 
 
-
 class UserDetailView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserDetailSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'user_id'
+
 
 class UserUpdateView(RetrieveUpdateAPIView):
     queryset = User.objects.all()
@@ -68,8 +68,6 @@ class Majors(ListAPIView):
 
     for i in info:
         print(i.text)
-    
-
 
 
 class QuestionCreateView(CreateAPIView):
@@ -89,7 +87,6 @@ class QuestionDelete(DestroyAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'question_id'
     # permission_class = [IsAdminUser,]
-
 
 
 class QuestionListView(ListAPIView):
@@ -131,7 +128,29 @@ class AnswerListView(ListAPIView):
         return Response(message_list, status=status.HTTP_200_OK)
 
 
-
 class MajorListView(ListAPIView):
     queryset = Major.objects.all()
     serializer_class = MajorSerializer
+
+
+class AnswerApproveView(RetrieveUpdateAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerApproveSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'answer_id'
+
+    # serializer_class = AnswerApproveSerializer
+
+    # def post(self, request, answer_id):
+    #     my_data = request.data
+    #     print(my_data)
+    #     serializer = self.serializer_class(data=my_data)
+    #     if serializer.is_valid():
+    #         valid_data = serializer.data
+    #         new_data = {
+    #             'approved': valid_data['approved'],
+    #             'answer': Answer.objects.get(id=answer_id)
+    #         }
+    #         Answer.objects.create(**new_data)
+    #         return Response(valid_data, status=status.HTTP_200_OK)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
