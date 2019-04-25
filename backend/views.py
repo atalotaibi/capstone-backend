@@ -138,19 +138,3 @@ class AnswerApproveView(RetrieveUpdateAPIView):
     serializer_class = AnswerApproveSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'answer_id'
-
-    # serializer_class = AnswerApproveSerializer
-
-    # def post(self, request, answer_id):
-    #     my_data = request.data
-    #     print(my_data)
-    #     serializer = self.serializer_class(data=my_data)
-    #     if serializer.is_valid():
-    #         valid_data = serializer.data
-    #         new_data = {
-    #             'approved': valid_data['approved'],
-    #             'answer': Answer.objects.get(id=answer_id)
-    #         }
-    #         Answer.objects.create(**new_data)
-    #         return Response(valid_data, status=status.HTTP_200_OK)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
