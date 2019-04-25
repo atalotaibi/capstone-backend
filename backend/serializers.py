@@ -104,7 +104,7 @@ class QuestionApproveSerializer(serializers.ModelSerializer):
 class AnswerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ['a_text', 'approved']
+        fields = ['id', 'a_text', 'approved']
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
