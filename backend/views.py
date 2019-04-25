@@ -22,7 +22,7 @@ from django.contrib.auth import get_user_model
 
 # from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
-                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer, AnswerApproveSerializer)
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer, AnswerApproveSerializer, QuestionApproveSerializer)
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import (
@@ -138,3 +138,10 @@ class AnswerApproveView(RetrieveUpdateAPIView):
     serializer_class = AnswerApproveSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'answer_id'
+
+
+class QuestionApproveView(RetrieveUpdateAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionApproveSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'question_id'

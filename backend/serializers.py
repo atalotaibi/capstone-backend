@@ -95,6 +95,12 @@ class QuestionCreateUpdateSerializer(serializers.ModelSerializer):
         fields = ['q_text', 'major', ]
 
 
+class QuestionApproveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['approved']
+
+
 class AnswerListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer

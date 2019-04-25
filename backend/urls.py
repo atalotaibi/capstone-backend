@@ -7,7 +7,8 @@ from .views import (
     UserCreateAPIView,
     ExpertUserCreateAPIView,
     UserDetailView,
-    UserUpdateView
+    UserUpdateView,
+    QuestionApproveView
 )
 
 
@@ -29,6 +30,8 @@ urlpatterns = [
     path('question/<int:question_id>',
          QuestionDetailView.as_view(), name='question-detail'),
     path('<int:question_id>/', AnswerListView.as_view(), name='answer-list'),
+    path('<int:question_id>/qstatus',
+         QuestionApproveView.as_view(), name='question-approve'),
     path('<int:question_id>/send', AnswerCreateView.as_view(), name='answer-create'),
     path('<int:answer_id>/status',
          AnswerApproveView.as_view(), name='answer-approve'),
