@@ -12,8 +12,8 @@ from django.contrib.auth import get_user_model
 
 # from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
-                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer, AnswerApproveSerializer, QuestionApproveSerializer, UserDetailSerializer,
-    UserCreateUpdateSerializer)
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionDetailSerializer, AnswerApproveSerializer, QuestionApproveSerializer, UserDetailSerializer,
+                          UserCreateUpdateSerializer)
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
@@ -21,15 +21,12 @@ from rest_framework import status
 from rest_framework.response import Response
 
 
-
-
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
+
     def perform_create(self, serializer):
         print("2")
         super().perform_create(serializer)
-        
-
 
 
 class ExpertUserCreateAPIView(CreateAPIView):
@@ -43,7 +40,6 @@ class UserDetailView(RetrieveAPIView):
     lookup_url_kwarg = 'user_id'
 
 
-
 class UserUpdateView(RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserCreateUpdateSerializer
@@ -54,27 +50,25 @@ class UserUpdateView(RetrieveUpdateAPIView):
 class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionCreateSerializer
     # permission_classes = [IsAuthenticated]
-    
 
     def perform_create(self, serializer):
-        
+
         serializer.save(asked_by=self.request.user)
-        
+
 
 class QuestionDelete(DestroyAPIView):
     queryset = Question.objects.all()
-    serializer_class = QuestionCreateUpdateSerializer
+    serializer_class = QuestionCreateSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'question_id'
     # permission_class = [IsAdminUser,]
-
 
 
 class QuestionListView(ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionListSerializer
     # A = [AllowAny,IsAuthenticated, IsAdminUser ]
-    
+
 
 class QuestionDetailView(RetrieveAPIView):
     queryset = Question.objects.all()
@@ -87,9 +81,8 @@ class AnswerCreateView(CreateAPIView):
     serializer_class = AnswerCreateSerializer
     # permission_classes = [IsAuthenticated, IsAdminUser]
 
-
     def perform_create(self, serializer):
-        
+
         serializer.save(asked_by=self.request.user)
 
     def post(self, request, question_id):
