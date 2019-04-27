@@ -7,7 +7,7 @@ from .views import (
     UserCreateAPIView,
     ExpertUserCreateAPIView,
     UserDetailView,
-    UserUpdateView
+    # UserUpdateView
 )
 
 
@@ -16,7 +16,7 @@ urlpatterns = [
     path('login/', obtain_jwt_token, name='login'),
     path('register/', UserCreateAPIView.as_view(), name='register'),
     path('user/detail/<int:user_id>/', UserDetailView.as_view(), name='user-detail'),
-    path('user/update/<int:user_id>/',UserUpdateView.as_view(), name='user-update'),
+    # path('user/update/<int:user_id>/',UserUpdateView.as_view(), name='user-update'),
     path('expert/register/', ExpertUserCreateAPIView.as_view(), name='expert_register'),
 
 

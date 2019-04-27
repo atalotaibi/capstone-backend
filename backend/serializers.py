@@ -15,32 +15,35 @@ def assign_token(user):
     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
     payload = jwt_payload_handler(user)
     token = jwt_encode_handler(payload)
+    return token
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email',]
+        fields = ['id', 'username', 'first_name', 'last_name', 'email','image' ]
 
 
 class BaseCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     token = serializers.CharField(allow_blank=True, read_only=True)
+    # image = serializers.ImageField(allow_empty_file=True)
     class Meta:
         model = User
         fields = ['id', 'username', 'password',
-                  'first_name', 'last_name', 'email', 'token', ]
+                  'first_name', 'last_name', 'email', 'token','image' ]
 
+
+# get the token   
 
 class UserCreateSerializer(BaseCreateSerializer):
+    # pass
     def create(self, validated_data):
-        new_user = User(**validated_data)
-        new_user.is_expert = False
-        new_user.set_password(validated_data['password'])
-        new_user.save()
-        token = assign_token(new_user)
-        validated_data['token'] = token
-        return validated_data
+        user_obj = super().create(validated_data)
+        user_obj.set_password(user_obj.password)
+        user_obj.save()
+        user_obj.token = assign_token(user_obj)
+        return user_obj
 
 
 class ExpertUserCreateSerializer(BaseCreateSerializer):
@@ -60,46 +63,60 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','is_expert','username',
-                  'first_name', 'last_name', 'email', ]
+                  'first_name', 'last_name', 'email', 'image']
 
-class UserCreateUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id','username',
-                  'first_name', 'last_name', 'email','user' ]
+# class UserCreateUpdateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['id','username',
+#                   'first_name', 'last_name', 'email', ]
+#
 class MajorSerializer(serializers.ModelSerializer):
-
+    major=serializers.SerializerMethodField()
     class Meta:
         model = Major
-        fields = ['name']
+        fields = ['major']
 
+    def get_major(self, obj):
+        return obj.major
 
+        # shows the name  
 class QuestionCreateSerializer(serializers.ModelSerializer):
-
-
+    asked_by = UserSerializer(read_only=True)
+    
     class Meta:
         model = Question
-        fields = ['q_text', 'major',]
+        fields = ['q_text', 'major','asked_by']
+
+    
 
 
 class AnswerListSerializer(serializers.ModelSerializer):
+    answered_by = UserSerializer(read_only=True)
     class Meta:
         model = Answer
-        fields = ['a_text']
+        fields = ['a_text', 'created_on','answered_by']
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
+    asked_by = UserSerializer(read_only=True)
     answered = serializers.SerializerMethodField()
-    major = MajorSerializer()
+    # major = serializers.SerializerMethodField()
 
     class Meta:
         model = Question
-        fields = ['id', 'q_text', 'created_on', 'answers', 'major', ]
+        fields = ['id', 'q_text', 'created_on', 'answers', 'major','answered','asked_by', ]
 
     def get_answered(self, obj):
         return obj.answered()
+    
+    # def get_major(self, obj):
+    #     return obj.major.name
 
+    def get_asked_by(self, obj):
+        return obj.asked_by.name()
 
+    
 
 
 class AnswerCreateSerializer(serializers.ModelSerializer):

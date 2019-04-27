@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
@@ -6,12 +5,11 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     DestroyAPIView,
 )
-
 from .serializers import (
     UserCreateSerializer,
     ExpertUserCreateSerializer,
     UserDetailSerializer,
-    UserCreateUpdateSerializer
+    # UserCreateUpdateSerializer
 )
 
 from .models import User, Major, Question, Answer
@@ -23,21 +21,23 @@ from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
                           QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer)
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
-from rest_framework.permissions import (
-    AllowAny,
-    IsAuthenticated,
-    IsAdminUser
-)
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework import status
 from rest_framework.response import Response
-from urllib.request import urlopen
-from bs4 import BeautifulSoup
-import re
+# from urllib.request import urlopen
+# from bs4 import BeautifulSoup
+# import re
+
 
 
 
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
+    def perform_create(self, serializer):
+        print("2")
+        super().perform_create(serializer)
+        
+
 
 class ExpertUserCreateAPIView(CreateAPIView):
     serializer_class = ExpertUserCreateSerializer
@@ -49,43 +49,50 @@ class UserDetailView(RetrieveAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'user_id'
 
-class UserUpdateView(RetrieveUpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserCreateUpdateSerializer
-    lookup_field = 'id'
-    lookup_url_kwarg = 'user_id'
+# class UserUpdateView(RetrieveUpdateAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserCreateUpdateSerializer
+#     lookup_field = 'id'
+#     lookup_url_kwarg = 'user_id'
 
-class Majors(ListAPIView):
+# class Majors(ListAPIView):
     
-    url="https://www.jvis.com/uguide/majordesc.htm"
-    html= urlopen(url)
-    soup= BeautifulSoup(html.read(), features='html.parser')
-    info= soup.findAll('a', attrs={'href': re.compile("#")})
+#     url="https://www.jvis.com/uguide/majordesc.htm"
+#     html= urlopen(url)
+#     soup= BeautifulSoup(html.read(), features='html.parser')
+#     info= soup.findAll('a', attrs={'href': re.compile("#")})
 
-    for i in info:
-        print(i.text)
+#     for i in info:
+#         print(i.text)
     
-
 
 
 class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionCreateSerializer
-    # permission_classes = [IsAuthenticated, ]
+    # permission_classes = [IsAuthenticated]
+    
 
 
     def perform_create(self, serializer):
-        serializer.save()
+        
+        serializer.save(asked_by=self.request.user)
 
-#  dont forgat to assign the user asked=self.request.user
+
+
+#  dont forgat to assign the user asked_by=self.request.user
 class QuestionListView(ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionListSerializer
-
+    # A = [AllowAny,IsAuthenticated, IsAdminUser ]
+    
 
 class AnswerCreateView(CreateAPIView):
     serializer_class = AnswerCreateSerializer
+    # permission_classes = [IsAuthenticated, IsAdminUser]
 
-
+    def perform_create(self, serializer):
+        
+        serializer.save(asked_by=self.request.user)
     def post(self, request, question_id):
         my_data = request.data
         print(my_data)
@@ -94,7 +101,8 @@ class AnswerCreateView(CreateAPIView):
             valid_data = serializer.data
             new_data = {
                 'a_text': valid_data['a_text'],
-                'question': Question.objects.get(id=question_id)
+                'question': Question.objects.get(id=question_id),
+                'answered_by': request.user
             }
             Answer.objects.create(**new_data)
             return Response(valid_data, status=status.HTTP_200_OK)
@@ -102,14 +110,14 @@ class AnswerCreateView(CreateAPIView):
 
 
 class AnswerListView(ListAPIView):
+    serializer_class = AnswerListSerializer
+    # permission_classes = [AllowAny,IsAuthenticated, IsAdminUser ]
 
     def get(self, request, question_id):
         answers = Answer.objects.filter(
             question=Question.objects.get(id=question_id))
         message_list = AnswerListSerializer(answers, many=True).data
         return Response(message_list, status=status.HTTP_200_OK)
-
-
 
 
 class MajorListView(ListAPIView):
