@@ -22,7 +22,8 @@ def assign_token(user):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', ]
+        fields = ['id', 'username', 'first_name',
+                  'last_name', 'email', 'is_expert']
 
 
 class BaseCreateSerializer(serializers.ModelSerializer):
@@ -57,8 +58,8 @@ class ExpertUserCreateSerializer(BaseCreateSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-# im gonna finish the profile today hell yeah
+    # user = UserSerializer()
+    # im gonna finish the profile today hell yeah
     # image = serializers.SerializerMethodField()
 
     class Meta:
@@ -75,10 +76,14 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class MajorSerializer(serializers.ModelSerializer):
+    major = serializers.SerializerMethodField()
 
     class Meta:
         model = Major
-        fields = ['name']
+        fields = ['major']
+
+    def get_major(self, obj):
+        return obj.major
 
 
 class QuestionCreateSerializer(serializers.ModelSerializer):

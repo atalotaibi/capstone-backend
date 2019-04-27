@@ -33,7 +33,7 @@ urlpatterns = [
     path('<int:question_id>/qstatus',
          QuestionApproveView.as_view(), name='question-approve'),
     path('<int:question_id>/send', AnswerCreateView.as_view(), name='answer-create'),
-    path('<int:answer_id>/status',
+    path('<int:answer_id>/status/',
          AnswerApproveView.as_view(), name='answer-approve'),
     path('major/list/', MajorListView.as_view(), name='major-list'),
 
