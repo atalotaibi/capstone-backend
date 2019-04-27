@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
@@ -7,38 +6,30 @@ from rest_framework.generics import (
     DestroyAPIView,
 )
 
-
-from .serializers import (
-    UserCreateSerializer,
-    ExpertUserCreateSerializer,
-    UserDetailSerializer,
-    UserCreateUpdateSerializer
-)
-
-
 from .models import User, Major, Question, Answer
 from django.contrib.auth import get_user_model
 
 
 # from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
-                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer, AnswerApproveSerializer, QuestionApproveSerializer)
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer, AnswerApproveSerializer, QuestionApproveSerializer, UserDetailSerializer,
+    UserCreateUpdateSerializer)
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
-from rest_framework.permissions import (
-    AllowAny,
-    IsAuthenticated,
-    IsAdminUser
-)
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework import status
 from rest_framework.response import Response
-from urllib.request import urlopen
-from bs4 import BeautifulSoup
-import re
+
+
 
 
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
+    def perform_create(self, serializer):
+        print("2")
+        super().perform_create(serializer)
+        
+
 
 
 class ExpertUserCreateAPIView(CreateAPIView):
@@ -52,6 +43,7 @@ class UserDetailView(RetrieveAPIView):
     lookup_url_kwarg = 'user_id'
 
 
+
 class UserUpdateView(RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserCreateUpdateSerializer
@@ -59,27 +51,15 @@ class UserUpdateView(RetrieveUpdateAPIView):
     lookup_url_kwarg = 'user_id'
 
 
-class Majors(ListAPIView):
-
-    url = "https://www.jvis.com/uguide/majordesc.htm"
-    html = urlopen(url)
-    soup = BeautifulSoup(html.read(), features='html.parser')
-    info = soup.findAll('a', attrs={'href': re.compile("#")})
-
-    for i in info:
-        print(i.text)
-
-
 class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionCreateSerializer
-    # permission_classes = [IsAuthenticated, ]
+    # permission_classes = [IsAuthenticated]
+    
 
     def perform_create(self, serializer):
-        serializer.save()
-
-
-#  dont forgat to assign the user asked=self.request.user
-
+        
+        serializer.save(asked_by=self.request.user)
+        
 
 class QuestionDelete(DestroyAPIView):
     queryset = Question.objects.all()
@@ -89,10 +69,12 @@ class QuestionDelete(DestroyAPIView):
     # permission_class = [IsAdminUser,]
 
 
+
 class QuestionListView(ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionListSerializer
-
+    # A = [AllowAny,IsAuthenticated, IsAdminUser ]
+    
 
 class QuestionDetailView(RetrieveAPIView):
     queryset = Question.objects.all()
@@ -103,6 +85,12 @@ class QuestionDetailView(RetrieveAPIView):
 
 class AnswerCreateView(CreateAPIView):
     serializer_class = AnswerCreateSerializer
+    # permission_classes = [IsAuthenticated, IsAdminUser]
+
+
+    def perform_create(self, serializer):
+        
+        serializer.save(asked_by=self.request.user)
 
     def post(self, request, question_id):
         my_data = request.data
@@ -112,7 +100,8 @@ class AnswerCreateView(CreateAPIView):
             valid_data = serializer.data
             new_data = {
                 'a_text': valid_data['a_text'],
-                'question': Question.objects.get(id=question_id)
+                'question': Question.objects.get(id=question_id),
+                'answered_by': request.user
             }
             Answer.objects.create(**new_data)
             return Response(valid_data, status=status.HTTP_200_OK)
@@ -120,6 +109,8 @@ class AnswerCreateView(CreateAPIView):
 
 
 class AnswerListView(ListAPIView):
+    serializer_class = AnswerListSerializer
+    # permission_classes = [AllowAny,IsAuthenticated, IsAdminUser ]
 
     def get(self, request, question_id):
         answers = Answer.objects.filter(
