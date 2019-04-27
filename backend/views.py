@@ -7,6 +7,7 @@ from rest_framework.generics import (
     DestroyAPIView,
 )
 
+
 from .serializers import (
     UserCreateSerializer,
     ExpertUserCreateSerializer,
@@ -14,13 +15,14 @@ from .serializers import (
     UserCreateUpdateSerializer
 )
 
+
 from .models import User, Major, Question, Answer
 from django.contrib.auth import get_user_model
 
 
 # from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
-                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer)
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer, AnswerApproveSerializer, QuestionApproveSerializer)
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import (
@@ -35,9 +37,9 @@ from bs4 import BeautifulSoup
 import re
 
 
-
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
+
 
 class ExpertUserCreateAPIView(CreateAPIView):
     serializer_class = ExpertUserCreateSerializer
@@ -49,42 +51,58 @@ class UserDetailView(RetrieveAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'user_id'
 
+
 class UserUpdateView(RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserCreateUpdateSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'user_id'
 
+
 class Majors(ListAPIView):
-    
-    url="https://www.jvis.com/uguide/majordesc.htm"
-    html= urlopen(url)
-    soup= BeautifulSoup(html.read(), features='html.parser')
-    info= soup.findAll('a', attrs={'href': re.compile("#")})
+
+    url = "https://www.jvis.com/uguide/majordesc.htm"
+    html = urlopen(url)
+    soup = BeautifulSoup(html.read(), features='html.parser')
+    info = soup.findAll('a', attrs={'href': re.compile("#")})
 
     for i in info:
         print(i.text)
-    
-
 
 
 class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionCreateSerializer
     # permission_classes = [IsAuthenticated, ]
 
-
     def perform_create(self, serializer):
         serializer.save()
 
+
 #  dont forgat to assign the user asked=self.request.user
+
+
+class QuestionDelete(DestroyAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionCreateUpdateSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'question_id'
+    # permission_class = [IsAdminUser,]
+
+
 class QuestionListView(ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionListSerializer
 
 
+class QuestionDetailView(RetrieveAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionDetailSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'question_id'
+
+
 class AnswerCreateView(CreateAPIView):
     serializer_class = AnswerCreateSerializer
-
 
     def post(self, request, question_id):
         my_data = request.data
@@ -110,8 +128,20 @@ class AnswerListView(ListAPIView):
         return Response(message_list, status=status.HTTP_200_OK)
 
 
-
-
 class MajorListView(ListAPIView):
     queryset = Major.objects.all()
     serializer_class = MajorSerializer
+
+
+class AnswerApproveView(RetrieveUpdateAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerApproveSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'answer_id'
+
+
+class QuestionApproveView(RetrieveUpdateAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionApproveSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'question_id'
