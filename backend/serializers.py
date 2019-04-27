@@ -3,13 +3,15 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from .models import (
-  User,
-  Major,
-  Question,
-  Answer,
+    User,
+    Major,
+    Question,
+    Answer,
 )
 
 User = get_user_model()
+
+
 def assign_token(user):
     jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -21,13 +23,13 @@ def assign_token(user):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email','image' ]
+
+        fields = ['id', 'username', 'first_name', 'last_name', 'email','image','is_expert' ]
 
 
 class BaseCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     token = serializers.CharField(allow_blank=True, read_only=True)
-    # image = serializers.ImageField(allow_empty_file=True)
     class Meta:
         model = User
         fields = ['id', 'username', 'password',
@@ -47,7 +49,7 @@ class UserCreateSerializer(BaseCreateSerializer):
 
 
 class ExpertUserCreateSerializer(BaseCreateSerializer):
-    def create(self, validated_data):        
+    def create(self, validated_data):
         new_user = User(**validated_data)
         new_user.set_password(validated_data['password'])
         new_user.save()
@@ -57,22 +59,27 @@ class ExpertUserCreateSerializer(BaseCreateSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    # user = UserSerializer()
-# im gonna finish the profile today hell yeah
-    # image = serializers.SerializerMethodField()
+
     class Meta:
         model = User
+
         fields = ['id','is_expert','username',
                   'first_name', 'last_name', 'email', 'image']
 
-# class UserCreateUpdateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['id','username',
-#                   'first_name', 'last_name', 'email', ]
-#
+
+
+        
+
+
+class UserCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','username',
+                  'first_name', 'last_name', 'email','user','image' ]
+
 class MajorSerializer(serializers.ModelSerializer):
-    major=serializers.SerializerMethodField()
+    major = serializers.SerializerMethodField()
+
     class Meta:
         model = Major
         fields = ['major']
@@ -80,22 +87,29 @@ class MajorSerializer(serializers.ModelSerializer):
     def get_major(self, obj):
         return obj.major
 
+
+    
+
         # shows the name  
 class QuestionCreateSerializer(serializers.ModelSerializer):
     asked_by = UserSerializer(read_only=True)
-    
     class Meta:
         model = Question
         fields = ['q_text', 'major','asked_by']
 
-    
+class QuestionApproveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['approved']
+
 
 
 class AnswerListSerializer(serializers.ModelSerializer):
     answered_by = UserSerializer(read_only=True)
     class Meta:
         model = Answer
-        fields = ['a_text', 'created_on','answered_by']
+        fields = ['id','a_text', 'created_on','answered_by']
+
 
 
 class QuestionListSerializer(serializers.ModelSerializer):
@@ -105,7 +119,8 @@ class QuestionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ['id', 'q_text', 'created_on', 'answers', 'major','answered','asked_by', ]
+        fields = ['id', 'q_text', 'created_on', 'answers', 'major','answered','asked_by', 'approved']
+
 
     def get_answered(self, obj):
         return obj.answered()
@@ -116,11 +131,21 @@ class QuestionListSerializer(serializers.ModelSerializer):
     def get_asked_by(self, obj):
         return obj.asked_by.name()
 
-    
-
 
 class AnswerCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = ['a_text', ]
 
+
+class AnswerApproveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = ['approved', ]
+
+
+class QuestionDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ['id', 'q_text', 'created_on',
+                  'answers', 'major', 'answered', 'approved']

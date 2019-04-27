@@ -5,12 +5,6 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     DestroyAPIView,
 )
-from .serializers import (
-    UserCreateSerializer,
-    ExpertUserCreateSerializer,
-    UserDetailSerializer,
-    # UserCreateUpdateSerializer
-)
 
 from .models import User, Major, Question, Answer
 from django.contrib.auth import get_user_model
@@ -18,15 +12,13 @@ from django.contrib.auth import get_user_model
 
 # from django.contrib.auth.models import User
 from .serializers import (UserCreateSerializer, QuestionCreateSerializer,
-                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer)
+                          QuestionListSerializer, AnswerCreateSerializer, AnswerListSerializer, MajorSerializer, ExpertUserCreateSerializer, QuestionCreateUpdateSerializer, QuestionDetailSerializer, AnswerApproveSerializer, QuestionApproveSerializer, UserDetailSerializer,
+    UserCreateUpdateSerializer)
 
 from rest_framework.filters import (SearchFilter, OrderingFilter)
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework import status
 from rest_framework.response import Response
-# from urllib.request import urlopen
-# from bs4 import BeautifulSoup
-# import re
 
 
 
@@ -39,6 +31,7 @@ class UserCreateAPIView(CreateAPIView):
         
 
 
+
 class ExpertUserCreateAPIView(CreateAPIView):
     serializer_class = ExpertUserCreateSerializer
 
@@ -49,22 +42,13 @@ class UserDetailView(RetrieveAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'user_id'
 
-# class UserUpdateView(RetrieveUpdateAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserCreateUpdateSerializer
-#     lookup_field = 'id'
-#     lookup_url_kwarg = 'user_id'
 
-# class Majors(ListAPIView):
-    
-#     url="https://www.jvis.com/uguide/majordesc.htm"
-#     html= urlopen(url)
-#     soup= BeautifulSoup(html.read(), features='html.parser')
-#     info= soup.findAll('a', attrs={'href': re.compile("#")})
 
-#     for i in info:
-#         print(i.text)
-    
+class UserUpdateView(RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserCreateUpdateSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'user_id'
 
 
 class QuestionCreateView(CreateAPIView):
@@ -72,27 +56,42 @@ class QuestionCreateView(CreateAPIView):
     # permission_classes = [IsAuthenticated]
     
 
-
     def perform_create(self, serializer):
         
         serializer.save(asked_by=self.request.user)
+        
+
+class QuestionDelete(DestroyAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionCreateUpdateSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'question_id'
+    # permission_class = [IsAdminUser,]
 
 
 
-#  dont forgat to assign the user asked_by=self.request.user
 class QuestionListView(ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionListSerializer
     # A = [AllowAny,IsAuthenticated, IsAdminUser ]
     
 
+class QuestionDetailView(RetrieveAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionDetailSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'question_id'
+
+
 class AnswerCreateView(CreateAPIView):
     serializer_class = AnswerCreateSerializer
     # permission_classes = [IsAuthenticated, IsAdminUser]
 
+
     def perform_create(self, serializer):
         
         serializer.save(asked_by=self.request.user)
+
     def post(self, request, question_id):
         my_data = request.data
         print(my_data)
@@ -123,3 +122,17 @@ class AnswerListView(ListAPIView):
 class MajorListView(ListAPIView):
     queryset = Major.objects.all()
     serializer_class = MajorSerializer
+
+
+class AnswerApproveView(RetrieveUpdateAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerApproveSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'answer_id'
+
+
+class QuestionApproveView(RetrieveUpdateAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionApproveSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'question_id'
