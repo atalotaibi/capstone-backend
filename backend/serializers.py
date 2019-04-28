@@ -144,7 +144,9 @@ class AnswerApproveSerializer(serializers.ModelSerializer):
 
 
 class QuestionDetailSerializer(serializers.ModelSerializer):
+    asked_by = UserSerializer(read_only=True)
+
     class Meta:
         model = Question
         fields = ['id', 'q_text', 'created_on',
-                  'answers', 'major', 'answered', 'approved']
+                  'answers', 'major', 'answered', 'approved', 'asked_by']
