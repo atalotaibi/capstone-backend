@@ -108,7 +108,7 @@ class AnswerListView(ListAPIView):
     def get(self, request, question_id):
         answers = Answer.objects.filter(
             question=Question.objects.get(id=question_id))
-        message_list = AnswerListSerializer(answers, many=True).data
+        message_list = AnswerListSerializer(answers, many=True, context = {"request":request}).data
         return Response(message_list, status=status.HTTP_200_OK)
 
 

@@ -114,7 +114,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
 class QuestionListSerializer(serializers.ModelSerializer):
     asked_by = UserSerializer(read_only=True)
     answered = serializers.SerializerMethodField()
-    # major = serializers.SerializerMethodField()
+    major = MajorSerializer()
 
     class Meta:
         model = Question
@@ -145,7 +145,7 @@ class AnswerApproveSerializer(serializers.ModelSerializer):
 
 class QuestionDetailSerializer(serializers.ModelSerializer):
     asked_by = UserSerializer(read_only=True)
-
+    major = MajorSerializer()
     class Meta:
         model = Question
         fields = ['id', 'q_text', 'created_on',
